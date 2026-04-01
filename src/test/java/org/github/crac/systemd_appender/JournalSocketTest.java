@@ -79,7 +79,7 @@ class JournalSocketTest {
         var layout = org.apache.logging.log4j.core.layout.PatternLayout.newBuilder()
                 .withPattern("%m").build();
 
-        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "my-app", -1, 42L,
+        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "my-app", -1, "42",
                 false, true, true, true, null, true, "test-appender", false, "THREAD_CONTEXT_", 65536);
         String result = new String(encoded, StandardCharsets.UTF_8);
 
@@ -103,7 +103,7 @@ class JournalSocketTest {
         var layout = org.apache.logging.log4j.core.layout.PatternLayout.newBuilder()
                 .withPattern("%m").build();
 
-        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "app", 16, 1L,
+        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "app", 16, "1",
                 false, false, false, false, null, false, "a", false, "THREAD_CONTEXT_", 65536);
         String result = new String(encoded, StandardCharsets.UTF_8);
 
@@ -126,7 +126,7 @@ class JournalSocketTest {
         var layout = org.apache.logging.log4j.core.layout.PatternLayout.newBuilder()
                 .withPattern("%m").build();
 
-        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "app", -1, 1L,
+        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "app", -1, "1",
                 false, true, false, false, null, false, "a", false, "THREAD_CONTEXT_", 65536);
         String result = new String(encoded, StandardCharsets.UTF_8);
 
@@ -147,7 +147,7 @@ class JournalSocketTest {
         var layout = org.apache.logging.log4j.core.layout.PatternLayout.newBuilder()
                 .withPattern("%m").build();
 
-        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "app", -1, 1L,
+        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "app", -1, "1",
                 false, false, false, false, null, false, "a", true, "THREAD_CONTEXT_", 65536);
         String result = new String(encoded, StandardCharsets.UTF_8);
 
@@ -167,7 +167,7 @@ class JournalSocketTest {
         var layout = org.apache.logging.log4j.core.layout.PatternLayout.newBuilder()
                 .withPattern("%m").build();
 
-        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "app", -1, 1L,
+        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "app", -1, "1",
                 false, false, false, false, null, false, "a", false, "THREAD_CONTEXT_", 100);
         String result = new String(encoded, StandardCharsets.UTF_8);
 
@@ -187,7 +187,7 @@ class JournalSocketTest {
         var layout = org.apache.logging.log4j.core.layout.PatternLayout.newBuilder()
                 .withPattern("%m").build();
 
-        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "app", -1, 1L,
+        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "app", -1, "1",
                 false, false, false, true, "MYAPP", false, "a", false, "THREAD_CONTEXT_", 65536);
         String result = new String(encoded, StandardCharsets.UTF_8);
 
@@ -208,7 +208,7 @@ class JournalSocketTest {
         var layout = org.apache.logging.log4j.core.layout.PatternLayout.newBuilder()
                 .withPattern("%m").build();
 
-        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "app", -1, 1L,
+        byte[] encoded = JournaldAppender.encodeEvent(event, layout, "app", -1, "1",
                 true, false, false, false, null, false, "a", false, "THREAD_CONTEXT_", 65536);
         String result = new String(encoded, StandardCharsets.UTF_8);
 

@@ -18,6 +18,8 @@ import java.util.Locale;
 
 final class NativeLoader {
 
+    private static Path tempLibraryPath;
+
     private NativeLoader() {}
 
     /**
@@ -28,7 +30,10 @@ final class NativeLoader {
      *
      * @throws UnsatisfiedLinkError if the library cannot be found or loaded
      */
-    static void loadLibrary(String name) {
+    static synchronized void loadLibrary(String name) {
+        if (tempLibraryPath != null) {
+            return;
+        }
         String arch = normalizeArch(System.getProperty("os.arch", ""));
         String variant = isMusl(arch) ? "linux-" + arch + "-musl" : "linux-" + arch;
         String resource = "/native/" + variant + "/lib" + name + ".so";
@@ -44,10 +49,26 @@ final class NativeLoader {
             tmp.toFile().deleteOnExit();
             Files.copy(in, tmp, StandardCopyOption.REPLACE_EXISTING);
             tmp.toFile().setExecutable(true);
+            tempLibraryPath = tmp;
             System.load(tmp.toAbsolutePath().toString());
         } catch (IOException e) {
             throw new UnsatisfiedLinkError(
                     "Failed to extract and load native library " + resource + ": " + e.getMessage());
+        }
+    }
+
+    /**
+     * Deletes the temporary shared library file extracted during {@link #loadLibrary}.
+     * Called on CRaC checkpoint so no temp file survives in the checkpoint image.
+     */
+    static synchronized void deleteTempLibrary() {
+        Path path = tempLibraryPath;
+        if (path != null) {
+            try {
+                Files.deleteIfExists(path);
+            } catch (IOException ignored) {
+            }
+            tempLibraryPath = null;
         }
     }
 

@@ -46,8 +46,9 @@ class JournaldAppenderTest {
         var socket = new JournalSocket(socketPath);
         var layout = PatternLayout.newBuilder().withPattern("%m").build();
         var appender = new JournaldAppender(
-                "test", null, layout, true, socket, "my-app", -1, 99L,
+                "test", null, layout, true, socket, "my-app", -1, "99",
                 false, false, true, true, null, true, false, "THREAD_CONTEXT_", 65536);
+
         appender.start();
 
         var event = Log4jLogEvent.newBuilder()

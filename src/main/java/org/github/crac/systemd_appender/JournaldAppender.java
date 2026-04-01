@@ -31,7 +31,7 @@ import java.nio.file.Path;
 import java.util.Locale;
 
 @Plugin(name = "Systemd", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE, printObject = true)
-public final class JournaldAppender extends AbstractAppender {
+public final class JournaldAppender extends AbstractAppender implements org.crac.Resource {
 
     private static final byte[] TRUNCATED_MARKER =
             "[TRUNCATED]".getBytes(StandardCharsets.UTF_8);
@@ -39,7 +39,7 @@ public final class JournaldAppender extends AbstractAppender {
     private final JournalSocket socket;
     private final String syslogIdentifier;
     private final int syslogFacility;
-    private final long pid;
+    private String pid;
     private final boolean logSource;
     private final boolean logStacktrace;
     private final boolean logThreadName;
@@ -51,7 +51,7 @@ public final class JournaldAppender extends AbstractAppender {
     private final int maxMessageSize;
 
     JournaldAppender(String name, Filter filter, Layout<?> layout, boolean ignoreExceptions,
-                     JournalSocket socket, String syslogIdentifier, int syslogFacility, long pid,
+                     JournalSocket socket, String syslogIdentifier, int syslogFacility, String pid,
                      boolean logSource, boolean logStacktrace, boolean logThreadName,
                      boolean logLoggerName, String logLoggerAppName, boolean logAppenderName,
                      boolean logThreadContext, String threadContextPrefix, int maxMessageSize) {
@@ -69,6 +69,19 @@ public final class JournaldAppender extends AbstractAppender {
         this.logThreadContext = logThreadContext;
         this.threadContextPrefix = threadContextPrefix;
         this.maxMessageSize = maxMessageSize;
+        org.crac.Core.getGlobalContext().register(this);
+    }
+
+    @Override
+    public void beforeCheckpoint(org.crac.Context<? extends org.crac.Resource> context) {
+        socket.close();
+        NativeLoader.deleteTempLibrary();
+    }
+
+    @Override
+    public void afterRestore(org.crac.Context<? extends org.crac.Resource> context) {
+        pid = String.valueOf(ProcessHandle.current().pid());
+        socket.afterRestore();
     }
 
     @Override
@@ -95,7 +108,7 @@ public final class JournaldAppender extends AbstractAppender {
     // ---- encoding ----
 
     static byte[] encodeEvent(LogEvent event, Layout<?> layout, String syslogId,
-                               int syslogFacility, long pid,
+                               int syslogFacility, String pid,
                                boolean logSource, boolean logStacktrace,
                                boolean logThreadName, boolean logLoggerName, String logLoggerAppName,
                                boolean logAppenderName, String appenderName,
@@ -108,7 +121,7 @@ public final class JournaldAppender extends AbstractAppender {
             if (syslogFacility >= 0) {
                 appendField(other, "SYSLOG_FACILITY", String.valueOf(syslogFacility));
             }
-            appendField(other, "SYSLOG_PID", String.valueOf(pid));
+            appendField(other, "SYSLOG_PID", pid);
 
             if (logThreadName) {
                 appendField(other, "THREAD_NAME", event.getThreadName());
@@ -366,7 +379,7 @@ public final class JournaldAppender extends AbstractAppender {
             if (layout == null) {
                 layout = PatternLayout.newBuilder().withPattern("%m").build();
             }
-            long pid = ProcessHandle.current().pid();
+            String pid = String.valueOf(ProcessHandle.current().pid());
             return new JournaldAppender(
                     getName(), getFilter(), layout, isIgnoreExceptions(),
                     new JournalSocket(), id, syslogFacility, pid,

@@ -75,4 +75,13 @@ final class JournalSocket implements AutoCloseable {
             socket = null;
         }
     }
+
+    /**
+     * Resets state after a CRaC restore so the socket is re-opened on the next
+     * log event. Also clears {@code warnedMissing} so a restored process that
+     * now runs on a systemd host can connect even if it checkpointed elsewhere.
+     */
+    synchronized void afterRestore() {
+        warnedMissing = false;
+    }
 }
