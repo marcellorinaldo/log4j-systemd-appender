@@ -73,11 +73,19 @@ final class NativeLoader {
     }
 
     /**
-     * Detects whether the current system uses musl libc by checking for the
-     * musl dynamic linker at its standard path {@code /lib/ld-musl-<arch>.so.1}.
+     * Detects whether the running process uses musl libc by checking whether
+     * the musl dynamic linker is mapped into the process (via /proc/self/maps).
+     * This is reliable even on systems where musl is installed alongside glibc
+     * (e.g. Ubuntu with musl-tools), because the file's presence on disk is not
+     * sufficient — only the active dynamic linker appears in the process maps.
      */
     private static boolean isMusl(String arch) {
-        return Files.exists(Path.of("/lib/ld-musl-" + arch + ".so.1"));
+        try {
+            return Files.lines(Path.of("/proc/self/maps"))
+                    .anyMatch(line -> line.contains("ld-musl-"));
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     private static String normalizeArch(String osArch) {

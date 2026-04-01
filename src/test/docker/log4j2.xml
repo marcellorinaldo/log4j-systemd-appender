@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- SPDX-License-Identifier: BSD-3-Clause -->
+<Configuration status="WARN" packages="org.github.crac.systemd_appender">
+    <Appenders>
+        <Systemd name="Journal"
+                 syslogIdentifier="log4j-docker-smoke"
+                 logSource="true"
+                 logStacktrace="true"
+                 logThreadName="true"
+                 logLoggerName="true"
+                 logAppenderName="true"
+                 logThreadContext="true"
+                 threadContextPrefix="THREAD_CONTEXT_"/>
+        <!-- Console fallback so startup errors are visible even if journald is absent -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss} %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="debug">
+            <AppenderRef ref="Journal"/>
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
