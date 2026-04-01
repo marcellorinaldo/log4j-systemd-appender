@@ -11,7 +11,7 @@
 
 A Log4j 2 appender that sends structured log events directly to the systemd journal
 via Unix datagram socket, using the native [journal protocol].
-No `libsystemd` dependency — communication is handled by a small JNI shim.
+No `libsystemd` dependency.
 
 [journal protocol]: https://systemd.io/JOURNAL_NATIVE_PROTOCOL/
 
@@ -20,8 +20,8 @@ No `libsystemd` dependency — communication is handled by a small JNI shim.
 - Structured fields: `PRIORITY`, `SYSLOG_IDENTIFIER`, `THREAD_NAME`, `LOG4J_LOGGER`, `LOG4J_APPENDER`, `CODE_FILE/LINE/FUNC`, `STACKTRACE`, `SYSLOG_FACILITY`
 - Optional ThreadContext (MDC) forwarding with configurable key prefix
 - Message truncation when the datagram would exceed `maxMessageSize`
-- Zero runtime dependencies beyond Log4j 2 core and the bundled native library
-- Native library bundled for glibc and musl (Alpine Linux), x86_64 and aarch64
+- On JDK 22+: uses the Foreign Function & Memory API — no native library loaded at runtime
+- On JDK 17–21: uses a small JNI shim bundled for glibc and musl (Alpine Linux), x86_64 and aarch64
 
 ## Requirements
 
@@ -70,6 +70,12 @@ No `libsystemd` dependency — communication is handled by a small JNI shim.
 | `logThreadContext` | boolean | `true` | Forward ThreadContext (MDC) entries as `THREAD_CONTEXT_*` fields. Keys are uppercased and non-alphanumeric characters replaced with `_`. |
 | `threadContextPrefix` | String | `THREAD_CONTEXT_` | Prefix applied to ThreadContext keys. |
 | `maxMessageSize` | int | `65536` | Maximum datagram size in bytes. Messages that would exceed this limit are truncated and suffixed with `[TRUNCATED]`. |
+
+## System properties
+
+| Property | Description |
+|---|---|
+| `org.github.crac.systemd_appender.jni=true` | Force the JNI implementation even on JDK 22+. Useful for verifying that the bundled native library works on a modern JDK. |
 
 ## Building
 

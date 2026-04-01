@@ -30,6 +30,15 @@ public class SmokeTest {
 
         log.warn("This is a warning message");
 
+        if (Boolean.getBoolean("test.waitForKeyPress")) {
+            System.out.println("Press Enter to continue...");
+            try {
+                System.in.read();
+            } catch (java.io.IOException e) {
+                // ignore
+            }
+        }
+
         try {
             riskyOperation();
         } catch (RuntimeException e) {

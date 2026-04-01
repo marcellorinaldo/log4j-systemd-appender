@@ -246,7 +246,7 @@ class JournalSocketTest {
         assertTrue(Files.exists(Path.of(socketPath)), "Python server did not bind in time");
 
         byte[] data = "MESSAGE=hello\n".getBytes(StandardCharsets.UTF_8);
-        try (var socket = new UnixDgramSocket()) {
+        try (var socket = UnixDgramSocketFactory.create()) {
             socket.send(socketPath, data);
         }
 

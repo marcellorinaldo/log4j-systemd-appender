@@ -1,7 +1,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # glibc-based image (Ubuntu) — works on amd64 and arm64
 
-FROM azul/zulu-openjdk:17-jre
+ARG JDK_VER=17
+FROM azul/zulu-openjdk:${JDK_VER}-jre
 
 WORKDIR /app
 
@@ -9,4 +10,4 @@ COPY lib/ lib/
 COPY SmokeTest.class .
 COPY log4j2.xml .
 
-CMD ["java", "-cp", ".:lib/*", "SmokeTest"]
+CMD ["java", "--enable-native-access=ALL-UNNAMED", "-cp", ".:lib/*", "SmokeTest"]

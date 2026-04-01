@@ -11,7 +11,7 @@
  * Minimal JNI shim: open/sendto/close for AF_UNIX SOCK_DGRAM sockets.
  * No libsystemd dependency. All journal protocol logic lives in Java.
  *
- * JNI class: org.github.crac.systemd_appender.UnixDgramSocket
+ * JNI class: org.github.crac.systemd_appender.JniUnixDgramSocket
  */
 #include <jni.h>
 #include <sys/socket.h>
@@ -25,7 +25,7 @@
  * Returns the file descriptor on success, or -errno on failure.
  */
 JNIEXPORT jint JNICALL
-Java_org_github_crac_systemd_1appender_UnixDgramSocket_open0(JNIEnv *env, jclass cls)
+Java_org_github_crac_systemd_1appender_JniUnixDgramSocket_open0(JNIEnv *env, jclass cls)
 {
     int fd = socket(AF_UNIX, SOCK_DGRAM | SOCK_CLOEXEC, 0);
     if (fd < 0) {
@@ -39,7 +39,7 @@ Java_org_github_crac_systemd_1appender_UnixDgramSocket_open0(JNIEnv *env, jclass
  * Returns 0 on success, or -errno on failure.
  */
 JNIEXPORT jint JNICALL
-Java_org_github_crac_systemd_1appender_UnixDgramSocket_send0(
+Java_org_github_crac_systemd_1appender_JniUnixDgramSocket_send0(
         JNIEnv *env, jclass cls, jint fd, jstring path, jbyteArray data, jint length)
 {
     struct sockaddr_un addr;
@@ -72,7 +72,7 @@ Java_org_github_crac_systemd_1appender_UnixDgramSocket_send0(
  * Closes the socket file descriptor.
  */
 JNIEXPORT void JNICALL
-Java_org_github_crac_systemd_1appender_UnixDgramSocket_close0(
+Java_org_github_crac_systemd_1appender_JniUnixDgramSocket_close0(
         JNIEnv *env, jclass cls, jint fd)
 {
     close((int)fd);

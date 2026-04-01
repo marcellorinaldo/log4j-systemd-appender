@@ -64,14 +64,18 @@ final class JournalSocket implements AutoCloseable {
             warnedMissing = true;
             return null;
         }
-        socket = new UnixDgramSocket();
+        socket = UnixDgramSocketFactory.create();
         return socket;
     }
 
     @Override
     public synchronized void close() {
         if (socket != null) {
-            socket.close();
+            try {
+                socket.close();
+            } catch (IOException e) {
+                StatusLogger.getLogger().warn("Failed to close journal socket: {}", e.getMessage());
+            }
             socket = null;
         }
     }
