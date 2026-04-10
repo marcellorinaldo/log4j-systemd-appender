@@ -2,7 +2,7 @@
 <!-- SPDX-License-Identifier: BSD-3-Clause -->
 <Configuration status="WARN" packages="org.github.crac.systemd_appender">
     <Appenders>
-        <Systemd name="Journal"
+        <SystemdJournal name="Journal"
                  syslogIdentifier="log4j-docker-smoke"
                  logSource="true"
                  logStacktrace="true"

@@ -10,6 +10,7 @@
 package org.github.crac.systemd_appender;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.apache.logging.log4j.message.SimpleMessage;
@@ -81,5 +82,12 @@ class JournaldAppenderTest {
                 .build();
         assertNotNull(appender);
         appender.stop();
+    }
+
+    @Test
+    void pluginAnnotation_usesSystemdJournalName() {
+        Plugin plugin = JournaldAppender.class.getAnnotation(Plugin.class);
+        assertNotNull(plugin, "JournaldAppender must declare @Plugin");
+        assertEquals("SystemdJournal", plugin.name());
     }
 }

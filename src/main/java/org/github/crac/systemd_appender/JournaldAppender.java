@@ -30,7 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Locale;
 
-@Plugin(name = "Systemd", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE, printObject = true)
+@Plugin(name = "SystemdJournal", category = Core.CATEGORY_NAME, elementType = Appender.ELEMENT_TYPE, printObject = true)
 public final class JournaldAppender extends AbstractAppender implements org.crac.Resource {
 
     private static final byte[] TRUNCATED_MARKER =

@@ -9,7 +9,7 @@
 -->
 <Configuration status="WARN">
     <Appenders>
-        <Systemd name="journal"
+        <SystemdJournal name="journal"
                  syslogIdentifier="log4j-systemd-it"
                  syslogFacility="3"
                  logSource="true"
